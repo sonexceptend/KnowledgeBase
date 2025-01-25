@@ -128,6 +128,116 @@ fmt.Println(firstTime.Format("02-01-2006 15:04:05"))  // 15-05-2020 17:45:00
 fmt.Println(secondTime.Format("02-01-2006 15:04:05")) // 15-05-2020 17:45:10
 ```
 
+```go
+// func (t Time) Format(layout string) string
+current := time.Date(2020, time.May, 15, 17, 45, 12, 0, time.Local)
+fmt.Println(current.Format("02-01-2006 15:04:05")) // 15-05-2020 17:45:12
+Сравнение структур Time
+firstTime := time.Date(2020, time.May, 15, 17, 45, 12, 0, time.Local)
+secondTime := time.Date(2020, time.May, 15, 16, 45, 12, 0, time.Local)
+
+// func (t Time) After(u Time) bool
+// true если позже
+fmt.Println(firstTime.After(secondTime)) // true
+
+// func (t Time) Before(u Time) bool
+// true если раньше
+fmt.Println(firstTime.Before(secondTime)) // false
+
+// func (t Time) Equal(u Time) bool
+// true если равны
+fmt.Println(firstTime.Equal(secondTime)) // false
+```
+
+Методы, возвращающие отдельные элементы структуры
+
+```go
+current := time.Date(2020, time.May, 15, 17, 45, 12, 0, time.Local)
+
+// func (t Time) Date() (year int, month Month, day int)
+fmt.Println(current.Date()) // 2020 May 15
+
+// func (t Time) Year() int
+fmt.Println(current.Year()) // 2020
+
+// func (t Time) Month() Month
+fmt.Println(current.Month()) // May
+
+// func (t Time) Day() int
+fmt.Println(current.Day()) // 15
+
+// func (t Time) Clock() (hour, min, sec int)
+fmt.Println(current.Clock()) // 17 45 12
+
+// func (t Time) Hour() int
+fmt.Println(current.Hour()) //17
+
+// func (t Time) Minute() int
+fmt.Println(current.Minute()) // 45
+
+// func (t Time) Second() int
+fmt.Println(current.Second()) // 12
+
+// func (t Time) Unix() int64
+fmt.Println(current.Unix()) // 1589546712
+
+// func (t Time) Weekday() Weekday
+fmt.Println(current.Weekday()) // Friday
+
+// func (t Time) YearDay() int
+fmt.Println(current.YearDay()) // 136
+```
+
+Методы, изменяющие структуру Time
+
+```go
+now := time.Date(2020, time.May, 15, 17, 45, 12, 0, time.Local)
+
+// func (t Time) Add(d Duration) Time
+// изменяет дату в соответствии с параметром - "продолжительностью"
+future := now.Add(time.Hour * 12) // перемещаемся на 12 часов вперед
+
+// func (t Time) AddDate(years int, months int, days int) Time
+// изменяет дату в соответствии с параметрами - количеством лет, месяцев и дней
+past := now.AddDate(-1, -2, -3) // перемещаемся на 1 год, два месяца и 3 дня назад
+
+// func (t Time) Sub(u Time) Duration
+// вычисляет время, прошедшее между двумя датами
+fmt.Println(future.Sub(past)) // 10332h0m0s
+```
+
+Duration — продолжительность. Внутри Duration представляет из себя int64, определяющий количество наносекунд, прошедших между двумя моментами времени.
+
+```go
+now := time.Now()
+past := now.AddDate(0, 0, -1)
+future := now.AddDate(0, 0, 1)
+
+// func Since(t Time) Duration
+// вычисляет период между текущим моментом и заданным временем в прошлом
+fmt.Println(time.Since(past).Round(time.Second)) // 24h0m0s
+
+// func Until(t Time) Duration
+// вычисляет период между текущим моментом и заданным временем в будущем
+fmt.Println(time.Until(future).Round(time.Second)) // 24h0m0s
+
+// вычисляет период между past и future
+fmt.Println(past.Sub(future).Round(time.Second)) // 24h0m0s
+// func ParseDuration(s string) (Duration, error)
+// преобразует строку в Duration с использованием аннотаций:
+// "ns" - наносекунды,
+// "us" - микросекунды,
+// "ms" - миллисекунды,
+// "s" - секунды,
+// "m" - минуты,
+// "h" - часы.
+dur, err := time.ParseDuration("1h12m3s")
+if err != nil {
+	panic(err)
+}
+fmt.Println(dur.Round(time.Hour).Hours()) // 1
+```
+
 ## Структуры
 
 ### Array
